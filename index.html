@@ -25,6 +25,31 @@
                 text-shadow: 0 0 20px #ff7f50, 0 0 30px #ff7f50, 0 0 40px #ff7f50;
             }
         }
+        .menu {
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .menu button {
+            background-color: #ff5733;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 1em;
+            border-radius: 5px;
+        }
+        .menu button:hover {
+            background-color: #ff7f50;
+        }
+        .converter {
+            display: none;
+            margin-top: 20px;
+        }
+        .converter input[type="file"] {
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
@@ -38,5 +63,100 @@
     <h2>Contact Me</h2>
     <p>Email: gamestormzone@gmail.com</p>
     <p><a href="https://discord.gg/RMCZQU9Y" style="color: #7289da;">Discord</a></p>
+
+    <div class="menu">
+        <button onclick="showConverter('webmToJpg')">WebM to JPG</button>
+        <button onclick="showConverter('jpgToPng')">JPG to PNG</button>
+        <button onclick="showConverter('pngToJpg')">PNG to JPG</button>
+    </div>
+
+    <div id="webmToJpg" class="converter">
+        <h3>WebM to JPG Converter</h3>
+        <input type="file" id="webmInput" accept="video/webm">
+        <button onclick="convertWebmToJpg()">Convert</button>
+        <p id="webmToJpgResult"></p>
+    </div>
+
+    <div id="jpgToPng" class="converter">
+        <h3>JPG to PNG Converter</h3>
+        <input type="file" id="jpgInput" accept="image/jpeg">
+        <button onclick="convertJpgToPng()">Convert</button>
+        <p id="jpgToPngResult"></p>
+    </div>
+
+    <div id="pngToJpg" class="converter">
+        <h3>PNG to JPG Converter</h3>
+        <input type="file" id="pngInput" accept="image/png">
+        <button onclick="convertPngToJpg()">Convert</button>
+        <p id="pngToJpgResult"></p>
+    </div>
+
+    <script>
+        function showConverter(converterId) {
+            const converters = document.querySelectorAll('.converter');
+            converters.forEach(converter => converter.style.display = 'none');
+            document.getElementById(converterId).style.display = 'block';
+        }
+
+        function convertWebmToJpg() {
+            const input = document.getElementById('webmInput');
+            const result = document.getElementById('webmToJpgResult');
+            if (input.files && input.files[0]) {
+                result.textContent = "WebM to JPG conversion not yet implemented.";
+            } else {
+                result.textContent = "Please select a WebM file.";
+            }
+        }
+
+        function convertJpgToPng() {
+            const input = document.getElementById('jpgInput');
+            const result = document.getElementById('jpgToPngResult');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        const pngData = canvas.toDataURL('image/png');
+                        result.innerHTML = `<a download="converted.png" href="${pngData}">Download PNG</a>`;
+                    };
+                };
+                reader.readAsDataURL(file);
+            } else {
+                result.textContent = "Please select a JPG file.";
+            }
+        }
+
+        function convertPngToJpg() {
+            const input = document.getElementById('pngInput');
+            const result = document.getElementById('pngToJpgResult');
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        const jpgData = canvas.toDataURL('image/jpeg');
+                        result.innerHTML = `<a download="converted.jpg" href="${jpgData}">Download JPG</a>`;
+                    };
+                };
+                reader.readAsDataURL(file);
+            } else {
+                result.textContent = "Please select a PNG file.";
+            }
+        }
+    </script>
 </body>
 </html>
