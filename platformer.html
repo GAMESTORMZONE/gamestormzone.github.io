@@ -3,25 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Platformer Game</title>
+    <title>Platformer Game with Chat</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
     <style>
         body {
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
+            font-family: Arial, sans-serif;
             background-color: #1e1e2f;
+            color: #ffffff;
         }
         #gameContainer {
             width: 800px;
             height: 600px;
+            border: 2px solid #ffffff;
+            margin-top: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .controls div {
+            margin: 0 10px;
+            text-align: center;
+        }
+        .chat-container {
+            width: 800px;
+            margin-top: 20px;
+            background-color: #333;
+            padding: 10px;
+            border: 2px solid #ffffff;
+            border-radius: 5px;
+        }
+        .chat-messages {
+            height: 200px;
+            overflow-y: auto;
+            background-color: #222;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        .chat-input {
+            display: flex;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+        }
+        .chat-input button {
+            padding: 8px 12px;
+            background-color: #ff5733;
+            border: none;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background-color: #ff7f50;
         }
     </style>
 </head>
 <body>
+    <h1>Platformer Game with Controls and Chat</h1>
+    
     <div id="gameContainer"></div>
+
+    <div class="controls">
+        <div>
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/left.png" alt="Left Arrow">
+            <p>Balra Mozgás</p>
+        </div>
+        <div>
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/right.png" alt="Right Arrow">
+            <p>Jobbra Mozgás</p>
+        </div>
+        <div>
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/up.png" alt="Up Arrow">
+            <p>Ugrás</p>
+        </div>
+        <div>
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/down.png" alt="Down Arrow">
+            <p>Le</p>
+        </div>
+    </div>
+
+    <div class="chat-container">
+        <h3>Chat Szoba</h3>
+        <div class="chat-messages" id="chatMessages">
+            <p>Üdv a platformer játék chat szobájában!</p>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Írd be az üzeneted...">
+            <button onclick="sendMessage()">Küldés</button>
+        </div>
+    </div>
+
     <script>
         const config = {
             type: Phaser.AUTO,
@@ -137,6 +219,20 @@
             star.disableBody(true, true);
             score += 10;
             scoreText.setText('Score: ' + score);
+        }
+
+        // Egyszerű chat funkció
+        function sendMessage() {
+            const input = document.getElementById("chatInput");
+            const message = input.value.trim();
+            if (message !== "") {
+                const chatMessages = document.getElementById("chatMessages");
+                const newMessage = document.createElement("p");
+                newMessage.textContent = "Te: " + message;
+                chatMessages.appendChild(newMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                input.value = "";
+            }
         }
     </script>
 </body>
