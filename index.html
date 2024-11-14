@@ -34,31 +34,6 @@
                 text-shadow: 0 0 20px #ff7f50, 0 0 30px #ff7f50, 0 0 40px #ff7f50;
             }
         }
-        .menu {
-            margin: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .menu button {
-            background-color: #ff5733;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            cursor: pointer;
-            margin: 0 10px;
-            font-size: 1em;
-            border-radius: 5px;
-        }
-        .menu button:hover {
-            background-color: #ff7f50;
-        }
-        .converter {
-            display: none;
-            margin-top: 20px;
-        }
-        .converter input[type="file"] {
-            margin: 10px;
-        }
         #loader {
             position: fixed;
             width: 100%;
@@ -70,120 +45,66 @@
             justify-content: center;
             font-size: 2em;
             z-index: 9999;
+            animation: shake 0.5s infinite alternate;
         }
-        .slider img {
-            width: 100%;
-            max-width: 500px;
-            margin: 10px 0;
+        @keyframes shake {
+            0% { transform: translate(0px, 0px); }
+            100% { transform: translate(5px, -5px); }
+        }
+        #rocket {
+            font-size: 3em;
+            margin-top: 20px;
+            transition: transform 0.3s ease-in-out;
+        }
+        #countdown {
+            font-size: 4em;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="loader">Betöltés...</div>
-    <div id="content" style="display: none;">
-        <h1>Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
-        <p>I do a lot of things :)</p>
-
-        <h2>About Me</h2>
-        <p>I create FiveM scripts and develop FiveM servers.</p>
-        <p>Currently studying Computer Science and open to collaborations.</p>
-
-        <h2>Contact Me</h2>
-        <p>Email: gamestormzone@gmail.com</p>
-        <p><a href="https://discord.gg/RMCZQU9Y" style="color: #7289da;">Discord</a></p>
-
-        <div class="menu">
-            <button onclick="showConverter('webmToJpg')">WebM to JPG</button>
-            <button onclick="showConverter('jpgToPng')">JPG to PNG</button>
-            <button onclick="showConverter('pngToJpg')">PNG to JPG</button>
-            <button onclick="showConverter('webpToJpg')">WEBP to JPG</button>
-        </div>
-
-        <!-- Converters -->
-        <div id="webmToJpg" class="converter">
-            <h3>WebM to JPG Converter</h3>
-            <input type="file" id="webmInput" accept="video/webm">
-            <button onclick="convertWebmToJpg()">Convert</button>
-            <p id="webmToJpgResult"></p>
-        </div>
-
-        <div id="jpgToPng" class="converter">
-            <h3>JPG to PNG Converter</h3>
-            <input type="file" id="jpgInput" accept="image/jpeg">
-            <button onclick="convertJpgToPng()">Convert</button>
-            <p id="jpgToPngResult"></p>
-        </div>
-
-        <div id="pngToJpg" class="converter">
-            <h3>PNG to JPG Converter</h3>
-            <input type="file" id="pngInput" accept="image/png">
-            <button onclick="convertPngToJpg()">Convert</button>
-            <p id="pngToJpgResult"></p>
-        </div>
-
-        <div id="webpToJpg" class="converter">
-            <h3>WEBP to JPG Converter</h3>
-            <input type="file" id="webpInput" accept="image/webp">
-            <button onclick="convertWebpToJpg()">Convert</button>
-            <p id="webpToJpgResult"></p>
-        </div>
-
-        <!-- Image Slider -->
-        <div class="slider">
-            <img id="slide" src="image1.jpg" alt="Slide">
+    <div id="loader">
+        <div>
+            <div id="countdown">10</div>
+            <div id="rocket">🚀</div>
         </div>
     </div>
+    <div id="content" style="display: none;">
+        <h1> <span class="glow">GAMESTORMZONE</span></h1>
+        <p>I do a lot of things :)</p>
+        <!-- Rest of your content here -->
+    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Show/hide converter sections
-        function showConverter(converterId) {
-            const converters = document.querySelectorAll('.converter');
-            converters.forEach(converter => converter.style.display = 'none');
-            document.getElementById(converterId).style.display = 'block';
+        let countdown = 10;
+        const countdownElement = document.getElementById("countdown");
+        const rocketElement = document.getElementById("rocket");
+        const beep = new Audio("https://www.soundjay.com/button/beep-07.wav");
+
+        function startCountdown() {
+            const countdownInterval = setInterval(() => {
+                beep.play();
+                countdownElement.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    launchRocket();
+                }
+                countdown--;
+            }, 1000);
         }
 
-        // Conversion functions
-        function convertWebmToJpg() { /* Implement as needed */ }
-        function convertJpgToPng() { /* Implement as needed */ }
-        function convertPngToJpg() { /* Implement as needed */ }
-        function convertWebpToJpg() { /* Implement as needed */ }
-
-        // Loading animation
-        window.onload = function() {
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("content").style.display = "block";
-        };
-
-        // Image slider
-        const images = ["image1.jpg", "image2.jpg", "image3.jpg"];
-        let index = 0;
-        function changeImage() {
-            document.getElementById("slide").src = images[index];
-            index = (index + 1) % images.length;
+        function launchRocket() {
+            countdownElement.style.display = "none";
+            rocketElement.style.transition = "transform 3s ease-in-out";
+            rocketElement.style.transform = "translateY(-1000px)";
+            document.getElementById("loader").style.animation = "none"; // Stop shaking
+            setTimeout(() => {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("content").style.display = "block";
+            }, 3000);
         }
-        setInterval(changeImage, 3000);
 
-        // 3D Cube (Three.js)
-        let scene = new THREE.Scene();
-        let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        let renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-
-        let geometry = new THREE.BoxGeometry();
-        let material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
-        let cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-
-        camera.position.z = 5;
-        function animate() {
-            requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-            renderer.render(scene, camera);
-        }
-        animate();
+        window.onload = startCountdown;
     </script>
 </body>
 </html>
