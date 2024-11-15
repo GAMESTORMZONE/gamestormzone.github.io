@@ -142,11 +142,13 @@
         let countdown = 3;
         const countdownElement = document.getElementById("countdown");
         const rocketElement = document.getElementById("rocket-container");
-        const beepSound = new Audio("https://www.soundjay.com/button/switch-10.wav"); // Replace with a beeping sound URL
+        const beepSound = new Audio("https://raw.githubusercontent.com/GAMESTORMZONE/gamestormzone.github.io/main/beep-07.wav");
 
         function startCountdown() {
             const countdownInterval = setInterval(() => {
-                beepSound.play();
+                beepSound.play().catch(error => {
+                    console.warn("Failed to play sound:", error);
+                });
                 countdownElement.textContent = countdown;
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
@@ -167,6 +169,17 @@
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("content").style.display = "block";
             }, 3000);
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById("menu");
+            menu.classList.toggle("active");
+        }
+
+        function playClickSound() {
+            beepSound.play().catch(error => {
+                console.warn("Failed to play click sound:", error);
+            });
         }
 
         window.onload = startCountdown;
