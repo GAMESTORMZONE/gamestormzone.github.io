@@ -286,6 +286,12 @@
             menu.classList.toggle("active");
         }
 
+        function playClickSound() {
+            beepSound.play().catch(error => {
+                console.warn("Failed to play click sound:", error);
+            });
+        }
+
         window.onload = startCountdown;
     </script>
 </body>
