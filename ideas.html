@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GAMESTORMZONE</title>
     <style>
-        /* Styling for page background, loader, and menu */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -18,7 +17,7 @@
             cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto;
         }
         a, .menu a {
-            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto;
+            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto; /* Egyedi kurzor a linkekre */
         }
         @keyframes gradient {
             0% { background-position: 0% 50%; }
@@ -62,6 +61,36 @@
             animation: flame 0.1s infinite alternate;
             transform: translateX(-50%);
         }
+        .rocket::after {
+            content: '';
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            width: 10px;
+            height: 20px;
+            background: red;
+            border-radius: 50%;
+            animation: smoke 1s infinite;
+            opacity: 0.7;
+            transform: translateX(-50%);
+        }
+        @keyframes flame {
+            0% { height: 50px; background: orange; }
+            100% { height: 70px; background: yellow; }
+        }
+        @keyframes smoke {
+            0% { height: 20px; opacity: 0.7; transform: translateX(-50%) translateY(0px); }
+            100% { height: 40px; opacity: 0; transform: translateX(-50%) translateY(-40px); }
+        }
+        .shaking {
+            animation: shake 0.1s infinite alternate;
+        }
+        @keyframes shake {
+            from { transform: translate(1px, 1px) rotate(0deg); }
+            to { transform: translate(-1px, -1px) rotate(0deg); }
+        }
+
+        /* Menu Icon */
         .menu-icon {
             position: fixed;
             top: 20px;
@@ -74,6 +103,40 @@
             border-radius: 5px;
             transition: background-color 0.3s;
             z-index: 10000;
+        }
+        .menu-icon:hover {
+            background-color: #ff7f50;
+        }
+
+        /* Sidebar Menu */
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 250px;
+            background-color: #2e2e3e;
+            color: #ffffff;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 60px;
+        }
+        .menu a {
+            color: #ffffff;
+            padding: 15px;
+            margin: 10px 0;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background-color 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        .menu a:hover {
+            background-color: #ff5733;
         }
         .menu.active {
             transform: translateX(0);
@@ -88,82 +151,25 @@
         </div>
     </div>
 
+    <!-- Menu Icon -->
     <div class="menu-icon" onclick="toggleMenu()">☰ Menu</div>
+
+    <!-- Sidebar Menu -->
     <div class="menu" id="menu">
-        <a href="https://gamestormzone.github.io/videos.html" target="_blank">Videos</a>
-        <a href="https://gamestormzone.github.io/photos.html" target="_blank">Photos</a>
-        <!-- More links as needed -->
+        <a href="https://gamestormzone.github.io/videos.html" target="_blank" onclick="playClickSound()">Videos</a>
+        <a href="https://gamestormzone.github.io/photos.html" target="_blank" onclick="playClickSound()">Photos</a>
+        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank" onclick="playClickSound()">FiveM Script Projects</a>
+        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank" onclick="playClickSound()">Free FiveM Scripts</a>
+        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank" onclick="playClickSound()">Free FiveM Cars</a>
+        <a href="https://gamestormzone.github.io/ideas.html" target="_blank" onclick="playClickSound()">Ideas</a>
+        <a href="https://gamestormzone.github.io/games.html" target="_blank" onclick="playClickSound()">Games</a>
     </div>
 
     <div id="content" style="display: none;">
-        <h1>Ossz meg ötleteket a FiveM szerverekhez!</h1>
-        <input type="text" id="ideaInput" placeholder="Írd be az ötleted...">
-        <button onclick="submitIdea()">Ötlet beküldése</button>
-        <h2>Ötletek</h2>
-        <div id="ideasContainer"></div>
+        <h1>Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
+        <p>I do a lot of things :)</p>
+        <!-- Rest of your content here -->
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDl0skjaOiviJQZ-9Aqp-TZzjo5Su68m-8",
-            authDomain: "webw-a8069.firebaseapp.com",
-            databaseURL: "https://webw-a8069-default-rtdb.firebaseio.com",
-            projectId: "webw-a8069",
-            storageBucket: "webw-a8069.firebasestorage.app",
-            messagingSenderId: "333318950563",
-            appId: "1:333318950563:web:3562487d4a7c7823ebb916",
-            measurementId: "G-TJV62C7NWF"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        function submitIdea() {
-            const ideaInput = document.getElementById("ideaInput").value;
-            if (ideaInput.trim() === "") return;
-            const ideasRef = ref(db, 'ideas');
-            push(ideasRef, { text: ideaInput, likes: 0, dislikes: 0 });
-            document.getElementById("ideaInput").value = "";
-        }
-
-        function displayIdeas() {
-            const ideasRef = ref(db, 'ideas');
-            onValue(ideasRef, (snapshot) => {
-                const ideasContainer = document.getElementById("ideasContainer");
-                ideasContainer.innerHTML = "";
-                snapshot.forEach((childSnapshot) => {
-                    const idea = childSnapshot.val();
-                    const ideaId = childSnapshot.key;
-                    const ideaElement = document.createElement("div");
-                    ideaElement.classList.add("idea-box");
-                    ideaElement.innerHTML = `
-                        <p>${idea.text}</p>
-                        <div class="vote-buttons">
-                            <span onclick="updateVote('${ideaId}', 'likes')">👍 ${idea.likes}</span>
-                            <span onclick="updateVote('${ideaId}', 'dislikes')">👎 ${idea.dislikes}</span>
-                        </div>
-                    `;
-                    ideasContainer.appendChild(ideaElement);
-                });
-            });
-        }
-
-        function updateVote(ideaId, type) {
-            const ideaRef = ref(db, `ideas/${ideaId}`);
-            onValue(ideaRef, (snapshot) => {
-                const idea = snapshot.val();
-                const newCount = (type === 'likes' ? idea.likes : idea.dislikes) + 1;
-                update(ideaRef, { [type]: newCount });
-            }, { onlyOnce: true });
-        }
-
-        window.onload = function() {
-            displayIdeas();
-        };
-    </script>
 
     <script>
         let countdown = 3;
@@ -173,10 +179,10 @@
 
         function startCountdown() {
             const countdownInterval = setInterval(() => {
-                countdownElement.textContent = countdown;
                 beepSound.play().catch(error => {
                     console.warn("Failed to play sound:", error);
                 });
+                countdownElement.textContent = countdown;
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
                     launchRocket();
@@ -188,8 +194,10 @@
         function launchRocket() {
             countdownElement.style.display = "none";
             rocketElement.classList.remove("shaking");
+            rocketElement.classList.add("launch");
             rocketElement.style.transition = "transform 3s ease-in-out";
             rocketElement.style.transform = "translateY(-800px)";
+            
             setTimeout(() => {
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("content").style.display = "block";
@@ -201,7 +209,13 @@
             menu.classList.toggle("active");
         }
 
+        function playClickSound() {
+            beepSound.play().catch(error => {
+                console.warn("Failed to play click sound:", error);
+            });
+        }
+
         window.onload = startCountdown;
     </script>
 </body>
-</html>
+</html> 
