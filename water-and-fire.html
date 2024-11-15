@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fireboy and Watergirl Stílusú Játék</title>
+    <style>
+        /* Alap stílusok */
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            background-color: #f4e4c1;
+            position: relative;
+        }
+
+        /* Karakterek */
+        .character {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            bottom: 50px;
+        }
+
+        #fireboy {
+            background-color: red;
+            left: 100px;
+        }
+
+        #watergirl {
+            background-color: blue;
+            left: 200px;
+        }
+
+        /* Platform */
+        .platform {
+            width: 200px;
+            height: 20px;
+            background-color: #8b4513;
+            position: absolute;
+        }
+
+        /* Akadályok és interaktív elemek */
+        .lava {
+            width: 100px;
+            height: 20px;
+            background-color: #ff4500;
+            position: absolute;
+        }
+
+        .water {
+            width: 100px;
+            height: 20px;
+            background-color: #00bfff;
+            position: absolute;
+        }
+
+        /* Szöveges információk */
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="fireboy" class="character"></div>
+        <div id="watergirl" class="character"></div>
+        <div class="platform" style="bottom: 150px; left: 150px;"></div>
+        <div class="platform" style="bottom: 300px; left: 300px;"></div>
+        <div class="lava" style="bottom: 170px; left: 180px;"></div>
+        <div class="water" style="bottom: 320px; left: 320px;"></div>
+        <div id="info">Használd a nyílbillentyűket Fireboyhoz és a WASD billentyűket Watergirlhez.</div>
+    </div>
+    <script>
+        document.addEventListener('keydown', (event) => {
+            const fireboy = document.getElementById('fireboy');
+            const watergirl = document.getElementById('watergirl');
+            const key = event.key;
+
+            // Fireboy irányítása nyílbillentyűkkel
+            if (key === 'ArrowRight') {
+                fireboy.style.left = `${fireboy.offsetLeft + 10}px`;
+            }
+            if (key === 'ArrowLeft') {
+                fireboy.style.left = `${fireboy.offsetLeft - 10}px`;
+            }
+            if (key === 'ArrowUp') {
+                fireboy.style.bottom = `${parseInt(fireboy.style.bottom || '50') + 10}px`;
+            }
+
+            // Watergirl irányítása WASD gombokkal
+            if (key === 'd') {
+                watergirl.style.left = `${watergirl.offsetLeft + 10}px`;
+            }
+            if (key === 'a') {
+                watergirl.style.left = `${watergirl.offsetLeft - 10}px`;
+            }
+            if (key === 'w') {
+                watergirl.style.bottom = `${parseInt(watergirl.style.bottom || '50') + 10}px`;
+            }
+
+            checkCollision(fireboy, 'lava', 'Fireboy');
+            checkCollision(watergirl, 'water', 'Watergirl');
+        });
+
+        function checkCollision(character, obstacleClass, characterName) {
+            const obstacles = document.getElementsByClassName(obstacleClass);
+            for (let obstacle of obstacles) {
+                const charRect = character.getBoundingClientRect();
+                const obsRect = obstacle.getBoundingClientRect();
+
+                if (
+                    charRect.left < obsRect.left + obsRect.width &&
+                    charRect.left + charRect.width > obsRect.left &&
+                    charRect.top < obsRect.top + obsRect.height &&
+                    charRect.top + charRect.height > obsRect.top
+                ) {
+                    alert(`${characterName} veszélybe került! Újratöltés...`);
+                    resetGame();
+                }
+            }
+        }
+
+        function resetGame() {
+            document.getElementById('fireboy').style.left = '100px';
+            document.getElementById('fireboy').style.bottom = '50px';
+            document.getElementById('watergirl').style.left = '200px';
+            document.getElementById('watergirl').style.bottom = '50px';
+        }
+    </script>
+</body>
+</html>
