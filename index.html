@@ -17,7 +17,7 @@
             cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto;
         }
         a, .menu a {
-            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto; /* Egyedi kurzor a linkekre */
+            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto;
         }
         @keyframes gradient {
             0% { background-position: 0% 50%; }
@@ -141,6 +141,25 @@
         .menu.active {
             transform: translateX(0);
         }
+
+        .section {
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        .button-link {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #ffffff;
+            background-color: #ff5733;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .button-link:hover {
+            background-color: #ff7f50;
+        }
     </style>
 </head>
 <body>
@@ -166,9 +185,34 @@
     </div>
 
     <div id="content" style="display: none;">
-        <h1>Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
-        <p>I do a lot of things :)</p>
-        <!-- Rest of your content here -->
+        <h1 align="center">Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
+        <p align="center">I do a lot of things :)</p>
+
+        <div class="section">
+            <h2>🧑‍💻 About Me</h2>
+            <p>- 🌍 I create <b>FiveM scripts</b> and develop <b>FiveM servers</b>.<br>
+            - 🎓 Currently studying Computer Science.<br>
+            - 💼 Open to collaborations on game development and server-side scripting.<br>
+            - 🌱 Always learning new tech stacks to enhance my skills.</p>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Tech Stack</h2>
+            <p>
+                <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5"/>
+                <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3"/>
+                <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript"/>
+                <!-- Add more badges as needed -->
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>📱 Websites and Games just for FUN!</h2>
+            <div align="center">
+                <a href="https://gamestormzone.github.io/" target="_blank" class="button-link">Visit Main Site</a>
+                <a href="https://gamestormzone.github.io/platformer.html" target="_blank" class="button-link">Play Platformer Game</a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -218,4 +262,4 @@
         window.onload = startCountdown;
     </script>
 </body>
-</html> 
+</html>
