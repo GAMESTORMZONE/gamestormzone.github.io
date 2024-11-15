@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GAMESTORMZONE</title>
     <style>
+        /* Styling for page background, loader, and menu */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -61,35 +62,6 @@
             animation: flame 0.1s infinite alternate;
             transform: translateX(-50%);
         }
-        .rocket::after {
-            content: '';
-            position: absolute;
-            top: 90%;
-            left: 50%;
-            width: 10px;
-            height: 20px;
-            background: red;
-            border-radius: 50%;
-            animation: smoke 1s infinite;
-            opacity: 0.7;
-            transform: translateX(-50%);
-        }
-        @keyframes flame {
-            0% { height: 50px; background: orange; }
-            100% { height: 70px; background: yellow; }
-        }
-        @keyframes smoke {
-            0% { height: 20px; opacity: 0.7; transform: translateX(-50%) translateY(0px); }
-            100% { height: 40px; opacity: 0; transform: translateX(-50%) translateY(-40px); }
-        }
-        .shaking {
-            animation: shake 0.1s infinite alternate;
-        }
-        @keyframes shake {
-            from { transform: translate(1px, 1px) rotate(0deg); }
-            to { transform: translate(-1px, -1px) rotate(0deg); }
-        }
-
         .menu-icon {
             position: fixed;
             top: 20px;
@@ -103,62 +75,34 @@
             transition: background-color 0.3s;
             z-index: 10000;
         }
-        .menu-icon:hover {
-            background-color: #ff7f50;
-        }
-
-        .menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
-            background-color: #2e2e3e;
-            color: #ffffff;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 60px;
-        }
-        .menu a {
-            color: #ffffff;
-            padding: 15px;
-            margin: 10px 0;
-            text-decoration: none;
-            font-size: 18px;
-            transition: background-color 0.3s;
-            width: 100%;
-            text-align: center;
-        }
-        .menu a:hover {
-            background-color: #ff5733;
-        }
         .menu.active {
             transform: translateX(0);
         }
-
-        .idea-box {
-            background-color: #2e2e3e;
-            margin: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: left;
-            color: #ffffff;
-        }
-        .vote-buttons {
-            display: flex;
-            justify-content: space-between;
-            width: 100px;
-            margin: 10px auto 0;
-        }
-        .vote-buttons span {
-            font-size: 20px;
-            cursor: pointer;
-        }
     </style>
+</head>
+<body>
+    <div id="loader">
+        <div id="countdown">3</div>
+        <div id="rocket-container" class="shaking">
+            <div class="rocket" id="rocket"></div>
+        </div>
+    </div>
+
+    <div class="menu-icon" onclick="toggleMenu()">☰ Menu</div>
+    <div class="menu" id="menu">
+        <a href="https://gamestormzone.github.io/videos.html" target="_blank">Videos</a>
+        <a href="https://gamestormzone.github.io/photos.html" target="_blank">Photos</a>
+        <!-- More links as needed -->
+    </div>
+
+    <div id="content" style="display: none;">
+        <h1>Ossz meg ötleteket a FiveM szerverekhez!</h1>
+        <input type="text" id="ideaInput" placeholder="Írd be az ötleted...">
+        <button onclick="submitIdea()">Ötlet beküldése</button>
+        <h2>Ötletek</h2>
+        <div id="ideasContainer"></div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
         import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
@@ -219,7 +163,9 @@
         window.onload = function() {
             displayIdeas();
         };
-   <script>
+    </script>
+
+    <script>
         let countdown = 3;
         const countdownElement = document.getElementById("countdown");
         const rocketElement = document.getElementById("rocket-container");
@@ -227,10 +173,10 @@
 
         function startCountdown() {
             const countdownInterval = setInterval(() => {
+                countdownElement.textContent = countdown;
                 beepSound.play().catch(error => {
                     console.warn("Failed to play sound:", error);
                 });
-                countdownElement.textContent = countdown;
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
                     launchRocket();
@@ -242,10 +188,8 @@
         function launchRocket() {
             countdownElement.style.display = "none";
             rocketElement.classList.remove("shaking");
-            rocketElement.classList.add("launch");
             rocketElement.style.transition = "transform 3s ease-in-out";
             rocketElement.style.transform = "translateY(-800px)";
-            
             setTimeout(() => {
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("content").style.display = "block";
@@ -255,12 +199,6 @@
         function toggleMenu() {
             const menu = document.getElementById("menu");
             menu.classList.toggle("active");
-        }
-
-        function playClickSound() {
-            beepSound.play().catch(error => {
-                console.warn("Failed to play click sound:", error);
-            });
         }
 
         window.onload = startCountdown;
