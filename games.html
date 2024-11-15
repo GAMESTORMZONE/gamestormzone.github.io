@@ -85,6 +85,34 @@
             from { transform: translate(1px, 1px) rotate(0deg); }
             to { transform: translate(-1px, -1px) rotate(0deg); }
         }
+        /* Game Grid Styles */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .game-item {
+            background: #333;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .game-item:hover {
+            transform: scale(1.05);
+        }
+        .game-thumbnail {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .game-title {
+            margin-top: 8px;
+            font-size: 1em;
+            color: #ff7f50;
+        }
     </style>
 </head>
 <body>
@@ -98,7 +126,16 @@
     <div id="content" style="display: none;">
         <h1>Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
         <p>I do a lot of things :)</p>
-        <!-- Rest of your content here -->
+        
+        <!-- Game Selection Grid -->
+        <div class="game-grid">
+            <!-- Example Game -->
+            <div class="game-item" onclick="window.location.href='https://gamestormzone.github.io/platformer.html'">
+                <img src="https://via.placeholder.com/150" alt="Platformer Game" class="game-thumbnail">
+                <div class="game-title">Platformer Game</div>
+            </div>
+            <!-- Add more games here by duplicating the game-item block -->
+        </div>
     </div>
 
     <script>
@@ -135,4 +172,4 @@
         window.onload = startCountdown;
     </script>
 </body>
-</html>  
+</html>
