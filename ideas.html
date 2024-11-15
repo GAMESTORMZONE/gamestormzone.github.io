@@ -219,36 +219,7 @@
         window.onload = function() {
             displayIdeas();
         };
-    </script>
-</head>
-<body>
-    <div id="loader">
-        <div id="countdown">3</div>
-        <div id="rocket-container" class="shaking">
-            <div class="rocket" id="rocket"></div>
-        </div>
-    </div>
-
-    <div class="menu-icon" onclick="toggleMenu()">☰ Menu</div>
-    <div class="menu" id="menu">
-        <a href="https://gamestormzone.github.io/videos.html" target="_blank">Videos</a>
-        <a href="https://gamestormzone.github.io/photos.html" target="_blank">Photos</a>
-        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank">FiveM Script Projects</a>
-        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank">Free FiveM Scripts</a>
-        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank">Free FiveM Cars</a>
-        <a href="https://gamestormzone.github.io/ideas.html" target="_blank">Ideas</a>
-        <a href="https://gamestormzone.github.io/games.html" target="_blank">Games</a>
-    </div>
-
-    <div id="content" style="display: none;">
-        <h1>Ossz meg ötleteket a FiveM szerverekhez!</h1>
-        <input type="text" id="ideaInput" placeholder="Írd be az ötleted...">
-        <button onclick="submitIdea()">Ötlet beküldése</button>
-        <h2>Ötletek</h2>
-        <div id="ideasContainer"></div>
-    </div>
-
-    <script>
+   <script>
         let countdown = 3;
         const countdownElement = document.getElementById("countdown");
         const rocketElement = document.getElementById("rocket-container");
