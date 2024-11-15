@@ -3,156 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fejlettebb Fireboy and Watergirl Játék</title>
+    <title>Fireboy és Watergirl Stílusú Játék Chat-el</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
     <style>
-        /* Alap stílusok */
-        body, html {
+        body {
             margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-image: url('background.jpg'); /* Helyezz be egy háttérképet */
-            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+            color: #ffffff;
         }
-
-        #game-container {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
+        #gameContainer {
+            width: 800px;
+            height: 600px;
+            border: 2px solid #ffffff;
+            margin-top: 20px;
         }
-
-        /* Karakterek */
-        .character {
-            width: 40px;
-            height: 40px;
-            position: absolute;
-            bottom: 50px;
-            transition: all 0.1s linear;
-        }
-
-        #fireboy {
-            background-color: red;
-            left: 100px;
-        }
-
-        #watergirl {
-            background-color: blue;
-            left: 200px;
-        }
-
-        /* Platformok */
-        .platform {
-            width: 200px;
-            height: 20px;
-            background-color: #8b4513;
-            position: absolute;
-        }
-
-        .moving-platform {
-            width: 100px;
-            height: 20px;
-            background-color: #6b8e23;
-            position: absolute;
-            animation: movePlatform 2s infinite alternate;
-        }
-
-        /* Lava and Water */
-        .lava {
-            width: 100px;
-            height: 20px;
-            background-color: #ff4500;
-            position: absolute;
-        }
-
-        .water {
-            width: 100px;
-            height: 20px;
-            background-color: #00bfff;
-            position: absolute;
-        }
-
-        /* Animáció a mozgó platformhoz */
-        @keyframes movePlatform {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(150px); }
-        }
-
-        /* Szöveg */
-        #info {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 18px;
-            color: #fff;
-            text-shadow: 1px 1px 2px #000;
+        .controls, .chat-container {
+            width: 800px;
+            margin-top: 20px;
+            background-color: #333;
+            padding: 10px;
+            border: 2px solid #ffffff;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <div id="game-container">
-        <div id="fireboy" class="character"></div>
-        <div id="watergirl" class="character"></div>
-        <div class="platform" style="bottom: 150px; left: 150px;"></div>
-        <div class="platform" style="bottom: 300px; left: 300px;"></div>
-        <div class="moving-platform" style="bottom: 200px; left: 500px;"></div>
-        <div class="lava" style="bottom: 170px; left: 180px;"></div>
-        <div class="water" style="bottom: 320px; left: 320px;"></div>
-        <div id="info">Használd a nyílbillentyűket Fireboyhoz és a WASD billentyűket Watergirlhez.</div>
+    <h1>Fireboy és Watergirl Stílusú Játék</h1>
+    <div id="gameContainer"></div>
+    <div class="chat-container">
+        <h3>Chat Szoba</h3>
+        <div class="chat-messages" id="chatMessages">
+            <p>Üdv a játék chat szobájában!</p>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Írd be az üzeneted...">
+            <button onclick="sendMessage()">Küldés</button>
+        </div>
     </div>
+
     <script>
-        document.addEventListener('keydown', (event) => {
-            const fireboy = document.getElementById('fireboy');
-            const watergirl = document.getElementById('watergirl');
-            const key = event.key;
+        const config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            parent: 'gameContainer',
+            physics: {
+                default: 'arcade',
+                arcade: { gravity: { y: 300 }, debug: false }
+            },
+            scene: { preload: preload, create: create, update: update }
+        };
 
-            // Fireboy irányítása nyílbillentyűkkel
-            if (key === 'ArrowRight') {
-                fireboy.style.left = `${fireboy.offsetLeft + 10}px`;
+        const game = new Phaser.Game(config);
+        let fireboy, watergirl, platforms, cursors, keys;
+
+        function preload() {
+            this.load.image('sky', 'https://labs.phaser.io/assets/skies/space3.png');
+            this.load.image('ground', 'https://labs.phaser.io/assets/platform.png');
+            this.load.image('lava', 'https://labs.phaser.io/assets/sprites/red.png');
+            this.load.image('water', 'https://labs.phaser.io/assets/sprites/blue.png');
+            this.load.spritesheet('fireboy', 'https://labs.phaser.io/assets/sprites/orange.png', { frameWidth: 32, frameHeight: 48 });
+            this.load.spritesheet('watergirl', 'https://labs.phaser.io/assets/sprites/blue.png', { frameWidth: 32, frameHeight: 48 });
+        }
+
+        function create() {
+            this.add.image(400, 300, 'sky');
+            platforms = this.physics.add.staticGroup();
+            platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+            platforms.create(600, 400, 'ground');
+            platforms.create(50, 250, 'ground');
+            platforms.create(750, 220, 'ground');
+
+            fireboy = this.physics.add.sprite(100, 450, 'fireboy');
+            watergirl = this.physics.add.sprite(150, 450, 'watergirl');
+
+            fireboy.setBounce(0.2);
+            fireboy.setCollideWorldBounds(true);
+            watergirl.setBounce(0.2);
+            watergirl.setCollideWorldBounds(true);
+
+            this.physics.add.collider(fireboy, platforms);
+            this.physics.add.collider(watergirl, platforms);
+
+            cursors = this.input.keyboard.createCursorKeys();
+            keys = this.input.keyboard.addKeys('W,A,S,D');
+
+            // Láva és víz akadályok
+            const lava = this.physics.add.staticGroup();
+            lava.create(300, 500, 'lava').setScale(0.5).refreshBody();
+
+            const water = this.physics.add.staticGroup();
+            water.create(500, 500, 'water').setScale(0.5).refreshBody();
+
+            this.physics.add.overlap(fireboy, water, hitObstacle, null, this);
+            this.physics.add.overlap(watergirl, lava, hitObstacle, null, this);
+        }
+
+        function update() {
+            // Fireboy irányítása
+            if (cursors.left.isDown) {
+                fireboy.setVelocityX(-160);
+            } else if (cursors.right.isDown) {
+                fireboy.setVelocityX(160);
+            } else {
+                fireboy.setVelocityX(0);
             }
-            if (key === 'ArrowLeft') {
-                fireboy.style.left = `${fireboy.offsetLeft - 10}px`;
-            }
-            if (key === 'ArrowUp') {
-                fireboy.style.bottom = `${parseInt(fireboy.style.bottom || '50') + 10}px`;
+            if (cursors.up.isDown && fireboy.body.touching.down) {
+                fireboy.setVelocityY(-330);
             }
 
-            // Watergirl irányítása WASD gombokkal
-            if (key === 'd') {
-                watergirl.style.left = `${watergirl.offsetLeft + 10}px`;
+            // Watergirl irányítása
+            if (keys.A.isDown) {
+                watergirl.setVelocityX(-160);
+            } else if (keys.D.isDown) {
+                watergirl.setVelocityX(160);
+            } else {
+                watergirl.setVelocityX(0);
             }
-            if (key === 'a') {
-                watergirl.style.left = `${watergirl.offsetLeft - 10}px`;
-            }
-            if (key === 'w') {
-                watergirl.style.bottom = `${parseInt(watergirl.style.bottom || '50') + 10}px`;
-            }
-
-            checkCollision(fireboy, 'lava', 'Fireboy');
-            checkCollision(watergirl, 'water', 'Watergirl');
-        });
-
-        function checkCollision(character, obstacleClass, characterName) {
-            const obstacles = document.getElementsByClassName(obstacleClass);
-            for (let obstacle of obstacles) {
-                const charRect = character.getBoundingClientRect();
-                const obsRect = obstacle.getBoundingClientRect();
-
-                if (
-                    charRect.left < obsRect.left + obsRect.width &&
-                    charRect.left + charRect.width > obsRect.left &&
-                    charRect.top < obsRect.top + obsRect.height &&
-                    charRect.top + charRect.height > obsRect.top
-                ) {
-                    alert(`${characterName} veszélybe került! Újratöltés...`);
-                    resetGame();
-                }
+            if (keys.W.isDown && watergirl.body.touching.down) {
+                watergirl.setVelocityY(-330);
             }
         }
 
-        function resetGame() {
-            document.getElementById('fireboy').style.left = '100px';
-            document.getElementById('fireboy').style.bottom = '50px';
-            document.getElementById('watergirl').style.left = '200px';
-            document.getElementById('watergirl').style.bottom = '50px';
+        function hitObstacle(player, obstacle) {
+            alert(player.texture.key + ' nem léphet erre az akadályra!');
+            player.setPosition(100, 450);  // Visszahelyezi a kezdőpontra
+        }
+
+        // Egyszerű chat funkció
+        function sendMessage() {
+            const input = document.getElementById("chatInput");
+            const message = input.value.trim();
+            if (message !== "") {
+                const chatMessages = document.getElementById("chatMessages");
+                const newMessage = document.createElement("p");
+                newMessage.textContent = "Te: " + message;
+                chatMessages.appendChild(newMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                input.value = "";
+            }
         }
     </script>
 </body>
