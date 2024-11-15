@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fireboy és Watergirl Stílusú Játék Chat-el</title>
+    <title>Fireboy és Watergirl Stílusú Játék</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
     <style>
         body {
@@ -20,14 +20,44 @@
             height: 600px;
             border: 2px solid #ffffff;
             margin-top: 20px;
+            background-color: #000;
         }
-        .controls, .chat-container {
+        .chat-container {
             width: 800px;
             margin-top: 20px;
             background-color: #333;
             padding: 10px;
             border: 2px solid #ffffff;
             border-radius: 5px;
+            color: #ffffff;
+        }
+        .chat-messages {
+            height: 150px;
+            overflow-y: auto;
+            background-color: #222;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .chat-input {
+            display: flex;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+        }
+        .chat-input button {
+            padding: 8px 12px;
+            background-color: #ff5733;
+            border: none;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background-color: #ff7f50;
         }
     </style>
 </head>
@@ -55,29 +85,32 @@
                 default: 'arcade',
                 arcade: { gravity: { y: 300 }, debug: false }
             },
-            scene: { preload: preload, create: create, update: update }
+            scene: { preload, create, update }
         };
 
         const game = new Phaser.Game(config);
         let fireboy, watergirl, platforms, cursors, keys;
 
         function preload() {
-            this.load.image('sky', 'https://labs.phaser.io/assets/skies/space3.png');
-            this.load.image('ground', 'https://labs.phaser.io/assets/platform.png');
-            this.load.image('lava', 'https://labs.phaser.io/assets/sprites/red.png');
-            this.load.image('water', 'https://labs.phaser.io/assets/sprites/blue.png');
+            this.load.image('background', 'https://i.imgur.com/9yT89l4.jpg'); // Egy modern háttér
+            this.load.image('ground', 'https://i.imgur.com/lTk5xgD.png'); // Modern platform kép
+            this.load.image('lava', 'https://i.imgur.com/O9a3m5S.png'); // Láva kép
+            this.load.image('water', 'https://i.imgur.com/TglTz3L.png'); // Víz kép
             this.load.spritesheet('fireboy', 'https://labs.phaser.io/assets/sprites/orange.png', { frameWidth: 32, frameHeight: 48 });
             this.load.spritesheet('watergirl', 'https://labs.phaser.io/assets/sprites/blue.png', { frameWidth: 32, frameHeight: 48 });
         }
 
         function create() {
-            this.add.image(400, 300, 'sky');
+            this.add.image(400, 300, 'background'); // Hátter kép hozzáadása
             platforms = this.physics.add.staticGroup();
+
+            // Platformok elhelyezése
             platforms.create(400, 568, 'ground').setScale(2).refreshBody();
             platforms.create(600, 400, 'ground');
             platforms.create(50, 250, 'ground');
             platforms.create(750, 220, 'ground');
 
+            // Fireboy és Watergirl beállítása
             fireboy = this.physics.add.sprite(100, 450, 'fireboy');
             watergirl = this.physics.add.sprite(150, 450, 'watergirl');
 
@@ -92,7 +125,7 @@
             cursors = this.input.keyboard.createCursorKeys();
             keys = this.input.keyboard.addKeys('W,A,S,D');
 
-            // Láva és víz akadályok
+            // Láva és víz akadályok elhelyezése
             const lava = this.physics.add.staticGroup();
             lava.create(300, 500, 'lava').setScale(0.5).refreshBody();
 
