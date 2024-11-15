@@ -129,9 +129,9 @@
         
         <!-- Game Selection Grid -->
         <div class="game-grid">
-            <!-- Example Game -->
+            <!-- Platformer Game -->
             <div class="game-item" onclick="window.location.href='https://gamestormzone.github.io/platformer.html'">
-                <img src="https://via.placeholder.com/150" alt="Platformer Game" class="game-thumbnail">
+                <img src="https://github.com/GAMESTORMZONE/gamestormzone.github.io/blob/main/platformer.png" alt="Platformer Game" class="game-thumbnail">
                 <div class="game-title">Platformer Game</div>
             </div>
             <!-- Add more games here by duplicating the game-item block -->
@@ -142,13 +142,11 @@
         let countdown = 3;
         const countdownElement = document.getElementById("countdown");
         const rocketElement = document.getElementById("rocket-container");
-        const beepSound = new Audio("https://raw.githubusercontent.com/GAMESTORMZONE/gamestormzone.github.io/main/beep-07.wav");
+        const beepSound = new Audio("https://www.soundjay.com/button/switch-10.wav"); // Replace with a beeping sound URL
 
         function startCountdown() {
             const countdownInterval = setInterval(() => {
-                beepSound.play().catch(error => {
-                    console.warn("Failed to play sound:", error);
-                });
+                beepSound.play();
                 countdownElement.textContent = countdown;
                 if (countdown <= 0) {
                     clearInterval(countdownInterval);
@@ -169,17 +167,6 @@
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("content").style.display = "block";
             }, 3000);
-        }
-
-        function toggleMenu() {
-            const menu = document.getElementById("menu");
-            menu.classList.toggle("active");
-        }
-
-        function playClickSound() {
-            beepSound.play().catch(error => {
-                console.warn("Failed to play click sound:", error);
-            });
         }
 
         window.onload = startCountdown;
