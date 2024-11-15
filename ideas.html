@@ -13,17 +13,24 @@
             background: linear-gradient(90deg, #1e1e2f, #ff5733, #ff7f50);
             background-size: 600% 600%;
             animation: gradient 10s ease infinite;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
         }
         h1, h2, p {
             margin: 10px 0;
         }
-        #ideas-section {
-            margin: 20px;
-            padding: 20px;
+        #ideas-section, #top-ideas {
             background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
             border-radius: 10px;
-            text-align: left;
+            margin: 20px;
+            width: 45%;
             color: #fff;
+            text-align: left;
+        }
+        #top-ideas h2 {
+            text-align: center;
         }
         #idea-input {
             width: 80%;
@@ -40,6 +47,7 @@
             padding: 10px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
+            font-size: 0.9em;
         }
         .idea-content {
             margin-bottom: 5px;
@@ -69,12 +77,16 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
-    <h1>GAMESTORMZONE Ideas</h1>
     <div id="ideas-section">
         <h2>Submit Your Idea</h2>
         <input type="text" id="idea-input" placeholder="Type your idea here..." />
         <button onclick="submitIdea()">Submit Idea</button>
         <div id="ideas-list"></div>
+    </div>
+
+    <div id="top-ideas">
+        <h2>Top 10 Ideas</h2>
+        <div id="top-ideas-list"></div>
     </div>
 
     <script>
@@ -105,7 +117,8 @@
                     text: ideaText,
                     likes: 0,
                     dislikes: 0,
-                    comments: []
+                    comments: [],
+                    likedBy: {}
                 });
                 ideaInput.value = '';
             } else {
@@ -117,33 +130,66 @@
         const ideasList = document.getElementById('ideas-list');
         database.ref('ideas').on('value', (snapshot) => {
             ideasList.innerHTML = '';
+            let ideasArray = [];
+
             snapshot.forEach((childSnapshot) => {
                 const ideaId = childSnapshot.key;
                 const ideaData = childSnapshot.val();
+                ideasArray.push({ id: ideaId, ...ideaData });
+            });
 
+            // Sort ideas by likes for the top 10 sidebar
+            ideasArray.sort((a, b) => b.likes - a.likes);
+            displayTop10Ideas(ideasArray.slice(0, 10));
+
+            ideasArray.forEach((ideaData) => {
                 const ideaItem = document.createElement('div');
                 ideaItem.className = 'idea-item';
                 ideaItem.innerHTML = `
                     <div class="idea-content">${ideaData.text}</div>
                     <div class="idea-actions">
-                        <span class="emoji" onclick="updateReaction('${ideaId}', 'likes')">👍 ${ideaData.likes}</span>
-                        <span class="emoji" onclick="updateReaction('${ideaId}', 'dislikes')">👎 ${ideaData.dislikes}</span>
+                        <span class="emoji" onclick="updateReaction('${ideaData.id}', 'likes')">👍 ${ideaData.likes}</span>
+                        <span class="emoji" onclick="updateReaction('${ideaData.id}', 'dislikes')">👎 ${ideaData.dislikes}</span>
                     </div>
-                    <div class="comments" id="comments-${ideaId}">
+                    <div class="comments" id="comments-${ideaData.id}">
                         <h4>Comments</h4>
                         ${(ideaData.comments || []).map(comment => `<p>${comment}</p>`).join('')}
                         <input type="text" class="comment-input" placeholder="Add a comment..." 
-                            onkeypress="addComment(event, '${ideaId}')">
+                            onkeypress="addComment(event, '${ideaData.id}')">
                     </div>
                 `;
                 ideasList.appendChild(ideaItem);
             });
         });
 
-        // Update Likes/Dislikes
+        // Display Top 10 Ideas
+        function displayTop10Ideas(topIdeas) {
+            const topIdeasList = document.getElementById('top-ideas-list');
+            topIdeasList.innerHTML = '';
+            topIdeas.forEach((idea, index) => {
+                const ideaElement = document.createElement('div');
+                ideaElement.innerHTML = `<p>${index + 1}. ${idea.text} - 👍 ${idea.likes}</p>`;
+                topIdeasList.appendChild(ideaElement);
+            });
+        }
+
+        // Update Likes/Dislikes, allow only one like per user per idea
         function updateReaction(ideaId, type) {
-            const ideaRef = database.ref(`ideas/${ideaId}/${type}`);
-            ideaRef.transaction((currentValue) => (currentValue || 0) + 1);
+            const userId = "user_" + (localStorage.getItem("userId") || Date.now());
+            localStorage.setItem("userId", userId);
+
+            const ideaRef = database.ref(`ideas/${ideaId}`);
+            ideaRef.once('value').then((snapshot) => {
+                const data = snapshot.val();
+                if (!data.likedBy || !data.likedBy[userId]) {
+                    let updates = {};
+                    updates[type] = (data[type] || 0) + 1;
+                    updates[`likedBy/${userId}`] = true;
+                    ideaRef.update(updates);
+                } else {
+                    alert("You have already liked this idea!");
+                }
+            });
         }
 
         // Add Comment
