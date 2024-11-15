@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMESTORMZONE Ideas</title>
+    <title>GAMESTORMZONE</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,65 +24,58 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        /* További stílusok az ötletek megjelenítéséhez */
-        #ideasContainer div {
-            background-color: #2e2e3e;
+        #loader {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: #1e1e2f;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        #countdown {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #ff5733;
+        }
+        .menu-icon, .menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 18px;
             padding: 10px;
-            margin: 10px auto;
-            width: 80%;
-            border-radius: 5px;
-        }
-        .idea-text {
-            font-size: 18px;
-            color: #ff7f50;
-        }
-        .idea-votes {
-            margin-top: 5px;
-        }
-        .idea-button {
+            margin: 5px;
+            display: inline-block;
+            transition: background-color 0.3s;
             cursor: pointer;
-            margin: 0 5px;
-            font-size: 18px;
+        }
+        .menu-icon:hover, .menu a:hover {
+            background-color: #ff7f50;
+        }
+        .idea-box {
+            background-color: #2e2e3e;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: left;
+            color: #ffffff;
+        }
+        .vote-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100px;
+            margin: 10px auto 0;
+        }
+        .vote-buttons span {
+            font-size: 20px;
+            cursor: pointer;
         }
     </style>
-</head>
-<body>
-    <div id="loader">
-        <div id="countdown">3</div>
-        <div id="rocket-container" class="shaking">
-            <div class="rocket" id="rocket"></div>
-        </div>
-    </div>
-
-    <!-- Menu Icon -->
-    <div class="menu-icon" onclick="toggleMenu()">☰ Menu</div>
-
-    <!-- Sidebar Menu -->
-    <div class="menu" id="menu">
-        <a href="https://gamestormzone.github.io/videos.html" target="_blank" onclick="playClickSound()">Videos</a>
-        <a href="https://gamestormzone.github.io/photos.html" target="_blank" onclick="playClickSound()">Photos</a>
-        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank" onclick="playClickSound()">FiveM Script Projects</a>
-        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank" onclick="playClickSound()">Free FiveM Scripts</a>
-        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank" onclick="playClickSound()">Free FiveM Cars</a>
-        <a href="https://gamestormzone.github.io/ideas.html" target="_blank" onclick="playClickSound()">Ideas</a>
-        <a href="https://gamestormzone.github.io/games.html" target="_blank" onclick="playClickSound()">Games</a>
-    </div>
-
-    <div id="content" style="display: none;">
-        <h1>Ossz meg ötleteket a FiveM szerverekhez!</h1>
-        <form id="ideaForm">
-            <input type="text" id="ideaText" placeholder="Írd be az ötleted..." required>
-            <button type="submit">Ötlet beküldése</button>
-        </form>
-
-        <h2>Ötletek</h2>
-        <div id="ideasContainer"></div>
-    </div>
-
-    <!-- Firebase SDK és konfiguráció -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+        import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDl0skjaOiviJQZ-9Aqp-TZzjo5Su68m-8",
@@ -98,55 +91,76 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        document.getElementById('ideaForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const ideaText = document.getElementById('ideaText').value;
-            if (ideaText) {
-                const ideasRef = ref(db, 'ideas');
-                const newIdeaRef = push(ideasRef);
-                set(newIdeaRef, {
-                    text: ideaText,
-                    likes: 0,
-                    dislikes: 0
-                }).then(() => {
-                    document.getElementById('ideaText').value = '';
-                    alert('Ötlet sikeresen beküldve!');
-                });
-            }
-        });
+        function submitIdea() {
+            const ideaInput = document.getElementById("ideaInput").value;
+            if (ideaInput.trim() === "") return;
+            const ideasRef = ref(db, 'ideas');
+            push(ideasRef, { text: ideaInput, likes: 0, dislikes: 0 });
+            document.getElementById("ideaInput").value = "";
+        }
 
-        function updateVotes(ideaId, field, change) {
+        function displayIdeas() {
+            const ideasRef = ref(db, 'ideas');
+            onValue(ideasRef, (snapshot) => {
+                const ideasContainer = document.getElementById("ideasContainer");
+                ideasContainer.innerHTML = "";
+                snapshot.forEach((childSnapshot) => {
+                    const idea = childSnapshot.val();
+                    const ideaId = childSnapshot.key;
+                    const ideaElement = document.createElement("div");
+                    ideaElement.classList.add("idea-box");
+                    ideaElement.innerHTML = `
+                        <p>${idea.text}</p>
+                        <div class="vote-buttons">
+                            <span onclick="updateVote('${ideaId}', 'likes')">👍 ${idea.likes}</span>
+                            <span onclick="updateVote('${ideaId}', 'dislikes')">👎 ${idea.dislikes}</span>
+                        </div>
+                    `;
+                    ideasContainer.appendChild(ideaElement);
+                });
+            });
+        }
+
+        function updateVote(ideaId, type) {
             const ideaRef = ref(db, `ideas/${ideaId}`);
             onValue(ideaRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    update(ideaRef, {
-                        [field]: data[field] + change
-                    });
-                }
+                const idea = snapshot.val();
+                const newCount = (type === 'likes' ? idea.likes : idea.dislikes) + 1;
+                update(ideaRef, { [type]: newCount });
             }, { onlyOnce: true });
         }
 
-        const ideasRef = ref(db, 'ideas');
-        onValue(ideasRef, (snapshot) => {
-            const ideasContainer = document.getElementById('ideasContainer');
-            ideasContainer.innerHTML = '';
-            snapshot.forEach((childSnapshot) => {
-                const idea = childSnapshot.val();
-                const ideaId = childSnapshot.key;
-                const ideaElement = document.createElement('div');
-                ideaElement.innerHTML = `
-                    <p class="idea-text">${idea.text}</p>
-                    <div class="idea-votes">
-                        👍 <span>${idea.likes}</span> 
-                        <button class="idea-button" onclick="updateVotes('${ideaId}', 'likes', 1)">👍</button>
-                        👎 <span>${idea.dislikes}</span> 
-                        <button class="idea-button" onclick="updateVotes('${ideaId}', 'dislikes', 1)">👎</button>
-                    </div>`;
-                ideasContainer.appendChild(ideaElement);
-            });
-        });
+        window.onload = function() {
+            displayIdeas();
+        };
     </script>
+</head>
+<body>
+    <div id="loader">
+        <div id="countdown">3</div>
+        <div id="rocket-container" class="shaking">
+            <div class="rocket" id="rocket"></div>
+        </div>
+    </div>
+
+    <div class="menu-icon" onclick="toggleMenu()">☰ Menu</div>
+    <div class="menu" id="menu">
+        <a href="https://gamestormzone.github.io/videos.html" target="_blank">Videos</a>
+        <a href="https://gamestormzone.github.io/photos.html" target="_blank">Photos</a>
+        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank">FiveM Script Projects</a>
+        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank">Free FiveM Scripts</a>
+        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank">Free FiveM Cars</a>
+        <a href="https://gamestormzone.github.io/ideas.html" target="_blank">Ideas</a>
+        <a href="https://gamestormzone.github.io/games.html" target="_blank">Games</a>
+    </div>
+
+    <div id="content" style="display: none;">
+        <h1>Ossz meg ötleteket a FiveM szerverekhez!</h1>
+        <input type="text" id="ideaInput" placeholder="Írd be az ötleted...">
+        <button onclick="submitIdea()">Ötlet beküldése</button>
+        <h2>Ötletek</h2>
+        <div id="ideasContainer"></div>
+    </div>
 
     <script>
         let countdown = 3;
@@ -184,12 +198,6 @@
         function toggleMenu() {
             const menu = document.getElementById("menu");
             menu.classList.toggle("active");
-        }
-
-        function playClickSound() {
-            beepSound.play().catch(error => {
-                console.warn("Failed to play click sound:", error);
-            });
         }
 
         window.onload = startCountdown;
