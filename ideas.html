@@ -3,219 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMESTORMZONE</title>
+    <title>GAMESTORMZONE Ideas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #1e1e2f;
             color: #ffffff;
-            overflow: hidden;
             background: linear-gradient(90deg, #1e1e2f, #ff5733, #ff7f50);
             background-size: 600% 600%;
             animation: gradient 10s ease infinite;
-            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto;
         }
-        a, .menu a {
-            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto; /* Egyedi kurzor a linkekre */
-        }
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        #loader {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: #1e1e2f;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        #countdown {
-            font-size: 4em;
-            margin-bottom: 20px;
-            color: #ff5733;
-        }
-        .rocket {
-            position: relative;
-            width: 50px;
-            height: 100px;
-            background: gray;
-            border-radius: 25px;
-            overflow: hidden;
-        }
-        .rocket::before {
-            content: '';
-            position: absolute;
-            top: 80%;
-            left: 50%;
-            width: 15px;
-            height: 50px;
-            background: orange;
-            border-radius: 50%;
-            animation: flame 0.1s infinite alternate;
-            transform: translateX(-50%);
-        }
-        .rocket::after {
-            content: '';
-            position: absolute;
-            top: 90%;
-            left: 50%;
-            width: 10px;
-            height: 20px;
-            background: red;
-            border-radius: 50%;
-            animation: smoke 1s infinite;
-            opacity: 0.7;
-            transform: translateX(-50%);
-        }
-        @keyframes flame {
-            0% { height: 50px; background: orange; }
-            100% { height: 70px; background: yellow; }
-        }
-        @keyframes smoke {
-            0% { height: 20px; opacity: 0.7; transform: translateX(-50%) translateY(0px); }
-            100% { height: 40px; opacity: 0; transform: translateX(-50%) translateY(-40px); }
-        }
-        .shaking {
-            animation: shake 0.1s infinite alternate;
-        }
-        @keyframes shake {
-            from { transform: translate(1px, 1px) rotate(0deg); }
-            to { transform: translate(-1px, -1px) rotate(0deg); }
-        }
-
-        /* Menu Icon */
-        .menu-icon {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            cursor: pointer;
-            font-size: 24px;
-            color: #ffffff;
-            background-color: #ff5733;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            z-index: 10000;
-        }
-        .menu-icon:hover {
-            background-color: #ff7f50;
-        }
-
-        /* Sidebar Menu */
-        .menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
-            background-color: #2e2e3e;
-            color: #ffffff;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 60px;
-        }
-        .menu a {
-            color: #ffffff;
-            padding: 15px;
+        h1, h2, p {
             margin: 10px 0;
-            text-decoration: none;
-            font-size: 18px;
-            transition: background-color 0.3s;
-            width: 100%;
-            text-align: center;
         }
-        .menu a:hover {
-            background-color: #ff5733;
+        #ideas-section {
+            margin: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            text-align: left;
+            color: #fff;
         }
-        .menu.active {
-            transform: translateX(0);
+        #idea-input {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        #ideas-list {
+            margin-top: 20px;
+        }
+        .idea-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        .idea-content {
+            margin-bottom: 5px;
+        }
+        .idea-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .emoji {
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .comments {
+            margin-top: 10px;
+        }
+        .comment-input {
+            width: calc(100% - 22px);
+            padding: 5px;
+            border: none;
+            border-radius: 3px;
+            margin-top: 5px;
         }
     </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
-    <div id="loader">
-        <div id="countdown">3</div>
-        <div id="rocket-container" class="shaking">
-            <div class="rocket" id="rocket"></div>
-        </div>
-    </div>
-
-    <!-- Menu Icon -->
-    <div class="menu-icon" onclick="toggleMenu()">☰ Menu</div>
-
-    <!-- Sidebar Menu -->
-    <div class="menu" id="menu">
-        <a href="https://gamestormzone.github.io/videos.html" target="_blank" onclick="playClickSound()">Videos</a>
-        <a href="https://gamestormzone.github.io/photos.html" target="_blank" onclick="playClickSound()">Photos</a>
-        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank" onclick="playClickSound()">FiveM Script Projects</a>
-        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank" onclick="playClickSound()">Free FiveM Scripts</a>
-        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank" onclick="playClickSound()">Free FiveM Cars</a>
-        <a href="https://gamestormzone.github.io/ideas.html" target="_blank" onclick="playClickSound()">Ideas</a>
-        <a href="https://gamestormzone.github.io/games.html" target="_blank" onclick="playClickSound()">Games</a>
-    </div>
-
-    <div id="content" style="display: none;">
-        <h1>Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
-        <p>I do a lot of things :)</p>
-        <!-- Rest of your content here -->
+    <h1>GAMESTORMZONE Ideas</h1>
+    <div id="ideas-section">
+        <h2>Submit Your Idea</h2>
+        <input type="text" id="idea-input" placeholder="Type your idea here..." />
+        <button onclick="submitIdea()">Submit Idea</button>
+        <div id="ideas-list"></div>
     </div>
 
     <script>
-        let countdown = 3;
-        const countdownElement = document.getElementById("countdown");
-        const rocketElement = document.getElementById("rocket-container");
-        const beepSound = new Audio("https://raw.githubusercontent.com/GAMESTORMZONE/gamestormzone.github.io/main/beep-07.wav");
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDl0skjaOiviJQZ-9Aqp-TZzjo5Su68m-8",
+            authDomain: "webw-a8069.firebaseapp.com",
+            databaseURL: "https://webw-a8069-default-rtdb.firebaseio.com",
+            projectId: "webw-a8069",
+            storageBucket: "webw-a8069.firebasestorage.app",
+            messagingSenderId: "333318950563",
+            appId: "1:333318950563:web:3562487d4a7c7823ebb916",
+            measurementId: "G-TJV62C7NWF"
+        };
 
-        function startCountdown() {
-            const countdownInterval = setInterval(() => {
-                beepSound.play().catch(error => {
-                    console.warn("Failed to play sound:", error);
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Submit Idea
+        function submitIdea() {
+            const ideaInput = document.getElementById('idea-input');
+            const ideaText = ideaInput.value.trim();
+
+            if (ideaText) {
+                const newIdeaRef = database.ref('ideas').push();
+                newIdeaRef.set({
+                    text: ideaText,
+                    likes: 0,
+                    dislikes: 0,
+                    comments: []
                 });
-                countdownElement.textContent = countdown;
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    launchRocket();
-                }
-                countdown--;
-            }, 1000);
+                ideaInput.value = '';
+            } else {
+                alert('Please enter an idea!');
+            }
         }
 
-        function launchRocket() {
-            countdownElement.style.display = "none";
-            rocketElement.classList.remove("shaking");
-            rocketElement.classList.add("launch");
-            rocketElement.style.transition = "transform 3s ease-in-out";
-            rocketElement.style.transform = "translateY(-800px)";
-            
-            setTimeout(() => {
-                document.getElementById("loader").style.display = "none";
-                document.getElementById("content").style.display = "block";
-            }, 3000);
-        }
+        // Fetch and Display Ideas
+        const ideasList = document.getElementById('ideas-list');
+        database.ref('ideas').on('value', (snapshot) => {
+            ideasList.innerHTML = '';
+            snapshot.forEach((childSnapshot) => {
+                const ideaId = childSnapshot.key;
+                const ideaData = childSnapshot.val();
 
-        function toggleMenu() {
-            const menu = document.getElementById("menu");
-            menu.classList.toggle("active");
-        }
-
-        function playClickSound() {
-            beepSound.play().catch(error => {
-                console.warn("Failed to play click sound:", error);
+                const ideaItem = document.createElement('div');
+                ideaItem.className = 'idea-item';
+                ideaItem.innerHTML = `
+                    <div class="idea-content">${ideaData.text}</div>
+                    <div class="idea-actions">
+                        <span class="emoji" onclick="updateReaction('${ideaId}', 'likes')">👍 ${ideaData.likes}</span>
+                        <span class="emoji" onclick="updateReaction('${ideaId}', 'dislikes')">👎 ${ideaData.dislikes}</span>
+                    </div>
+                    <div class="comments" id="comments-${ideaId}">
+                        <h4>Comments</h4>
+                        ${(ideaData.comments || []).map(comment => `<p>${comment}</p>`).join('')}
+                        <input type="text" class="comment-input" placeholder="Add a comment..." 
+                            onkeypress="addComment(event, '${ideaId}')">
+                    </div>
+                `;
+                ideasList.appendChild(ideaItem);
             });
+        });
+
+        // Update Likes/Dislikes
+        function updateReaction(ideaId, type) {
+            const ideaRef = database.ref(`ideas/${ideaId}/${type}`);
+            ideaRef.transaction((currentValue) => (currentValue || 0) + 1);
         }
 
-        window.onload = startCountdown;
+        // Add Comment
+        function addComment(event, ideaId) {
+            if (event.key === 'Enter') {
+                const input = event.target;
+                const commentText = input.value.trim();
+                if (commentText) {
+                    const commentsRef = database.ref(`ideas/${ideaId}/comments`);
+                    commentsRef.transaction((currentComments) => {
+                        return (currentComments || []).concat(commentText);
+                    });
+                    input.value = '';
+                }
+            }
+        }
     </script>
 </body>
-</html> 
+</html>
