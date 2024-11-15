@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMESTORMZONE</title>
+    <title>GAMESTORMZONE Ideas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,129 +17,32 @@
             cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto;
         }
         a, .menu a {
-            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto; /* Egyedi kurzor a linkekre */
+            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto;
         }
         @keyframes gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        #loader {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: #1e1e2f;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        #countdown {
-            font-size: 4em;
-            margin-bottom: 20px;
-            color: #ff5733;
-        }
-        .rocket {
-            position: relative;
-            width: 50px;
-            height: 100px;
-            background: gray;
-            border-radius: 25px;
-            overflow: hidden;
-        }
-        .rocket::before {
-            content: '';
-            position: absolute;
-            top: 80%;
-            left: 50%;
-            width: 15px;
-            height: 50px;
-            background: orange;
-            border-radius: 50%;
-            animation: flame 0.1s infinite alternate;
-            transform: translateX(-50%);
-        }
-        .rocket::after {
-            content: '';
-            position: absolute;
-            top: 90%;
-            left: 50%;
-            width: 10px;
-            height: 20px;
-            background: red;
-            border-radius: 50%;
-            animation: smoke 1s infinite;
-            opacity: 0.7;
-            transform: translateX(-50%);
-        }
-        @keyframes flame {
-            0% { height: 50px; background: orange; }
-            100% { height: 70px; background: yellow; }
-        }
-        @keyframes smoke {
-            0% { height: 20px; opacity: 0.7; transform: translateX(-50%) translateY(0px); }
-            100% { height: 40px; opacity: 0; transform: translateX(-50%) translateY(-40px); }
-        }
-        .shaking {
-            animation: shake 0.1s infinite alternate;
-        }
-        @keyframes shake {
-            from { transform: translate(1px, 1px) rotate(0deg); }
-            to { transform: translate(-1px, -1px) rotate(0deg); }
-        }
-
-        /* Menu Icon */
-        .menu-icon {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            cursor: pointer;
-            font-size: 24px;
-            color: #ffffff;
-            background-color: #ff5733;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            z-index: 10000;
-        }
-        .menu-icon:hover {
-            background-color: #ff7f50;
-        }
-
-        /* Sidebar Menu */
-        .menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
+        /* További stílusok az ötletek megjelenítéséhez */
+        #ideasContainer div {
             background-color: #2e2e3e;
-            color: #ffffff;
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 60px;
+            padding: 10px;
+            margin: 10px auto;
+            width: 80%;
+            border-radius: 5px;
         }
-        .menu a {
-            color: #ffffff;
-            padding: 15px;
-            margin: 10px 0;
-            text-decoration: none;
+        .idea-text {
             font-size: 18px;
-            transition: background-color 0.3s;
-            width: 100%;
-            text-align: center;
+            color: #ff7f50;
         }
-        .menu a:hover {
-            background-color: #ff5733;
+        .idea-votes {
+            margin-top: 5px;
         }
-        .menu.active {
-            transform: translateX(0);
+        .idea-button {
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 18px;
         }
     </style>
 </head>
@@ -166,10 +69,84 @@
     </div>
 
     <div id="content" style="display: none;">
-        <h1>Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
-        <p>I do a lot of things :)</p>
-        <!-- Rest of your content here -->
+        <h1>Ossz meg ötleteket a FiveM szerverekhez!</h1>
+        <form id="ideaForm">
+            <input type="text" id="ideaText" placeholder="Írd be az ötleted..." required>
+            <button type="submit">Ötlet beküldése</button>
+        </form>
+
+        <h2>Ötletek</h2>
+        <div id="ideasContainer"></div>
     </div>
+
+    <!-- Firebase SDK és konfiguráció -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDl0skjaOiviJQZ-9Aqp-TZzjo5Su68m-8",
+            authDomain: "webw-a8069.firebaseapp.com",
+            databaseURL: "https://webw-a8069-default-rtdb.firebaseio.com",
+            projectId: "webw-a8069",
+            storageBucket: "webw-a8069.firebasestorage.app",
+            messagingSenderId: "333318950563",
+            appId: "1:333318950563:web:3562487d4a7c7823ebb916",
+            measurementId: "G-TJV62C7NWF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.getElementById('ideaForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const ideaText = document.getElementById('ideaText').value;
+            if (ideaText) {
+                const ideasRef = ref(db, 'ideas');
+                const newIdeaRef = push(ideasRef);
+                set(newIdeaRef, {
+                    text: ideaText,
+                    likes: 0,
+                    dislikes: 0
+                }).then(() => {
+                    document.getElementById('ideaText').value = '';
+                    alert('Ötlet sikeresen beküldve!');
+                });
+            }
+        });
+
+        function updateVotes(ideaId, field, change) {
+            const ideaRef = ref(db, `ideas/${ideaId}`);
+            onValue(ideaRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    update(ideaRef, {
+                        [field]: data[field] + change
+                    });
+                }
+            }, { onlyOnce: true });
+        }
+
+        const ideasRef = ref(db, 'ideas');
+        onValue(ideasRef, (snapshot) => {
+            const ideasContainer = document.getElementById('ideasContainer');
+            ideasContainer.innerHTML = '';
+            snapshot.forEach((childSnapshot) => {
+                const idea = childSnapshot.val();
+                const ideaId = childSnapshot.key;
+                const ideaElement = document.createElement('div');
+                ideaElement.innerHTML = `
+                    <p class="idea-text">${idea.text}</p>
+                    <div class="idea-votes">
+                        👍 <span>${idea.likes}</span> 
+                        <button class="idea-button" onclick="updateVotes('${ideaId}', 'likes', 1)">👍</button>
+                        👎 <span>${idea.dislikes}</span> 
+                        <button class="idea-button" onclick="updateVotes('${ideaId}', 'dislikes', 1)">👎</button>
+                    </div>`;
+                ideasContainer.appendChild(ideaElement);
+            });
+        });
+    </script>
 
     <script>
         let countdown = 3;
@@ -218,4 +195,4 @@
         window.onload = startCountdown;
     </script>
 </body>
-</html> 
+</html>
