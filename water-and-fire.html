@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fireboy and Watergirl Stílusú Játék</title>
+    <title>Fejlettebb Fireboy and Watergirl Játék</title>
     <style>
         /* Alap stílusok */
         body, html {
             margin: 0;
             padding: 0;
             overflow: hidden;
+            background-image: url('background.jpg'); /* Helyezz be egy háttérképet */
+            background-size: cover;
         }
 
         #game-container {
             width: 100vw;
             height: 100vh;
-            background-color: #f4e4c1;
             position: relative;
         }
 
@@ -25,6 +26,7 @@
             height: 40px;
             position: absolute;
             bottom: 50px;
+            transition: all 0.1s linear;
         }
 
         #fireboy {
@@ -37,7 +39,7 @@
             left: 200px;
         }
 
-        /* Platform */
+        /* Platformok */
         .platform {
             width: 200px;
             height: 20px;
@@ -45,7 +47,15 @@
             position: absolute;
         }
 
-        /* Akadályok és interaktív elemek */
+        .moving-platform {
+            width: 100px;
+            height: 20px;
+            background-color: #6b8e23;
+            position: absolute;
+            animation: movePlatform 2s infinite alternate;
+        }
+
+        /* Lava and Water */
         .lava {
             width: 100px;
             height: 20px;
@@ -60,12 +70,20 @@
             position: absolute;
         }
 
-        /* Szöveges információk */
+        /* Animáció a mozgó platformhoz */
+        @keyframes movePlatform {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(150px); }
+        }
+
+        /* Szöveg */
         #info {
             position: absolute;
             top: 10px;
             left: 10px;
             font-size: 18px;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
         }
     </style>
 </head>
@@ -75,6 +93,7 @@
         <div id="watergirl" class="character"></div>
         <div class="platform" style="bottom: 150px; left: 150px;"></div>
         <div class="platform" style="bottom: 300px; left: 300px;"></div>
+        <div class="moving-platform" style="bottom: 200px; left: 500px;"></div>
         <div class="lava" style="bottom: 170px; left: 180px;"></div>
         <div class="water" style="bottom: 320px; left: 320px;"></div>
         <div id="info">Használd a nyílbillentyűket Fireboyhoz és a WASD billentyűket Watergirlhez.</div>
