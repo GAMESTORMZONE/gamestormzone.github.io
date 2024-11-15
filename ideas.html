@@ -7,65 +7,80 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
             background-color: #1e1e2f;
             color: #ffffff;
             background: linear-gradient(90deg, #1e1e2f, #ff5733, #ff7f50);
             background-size: 600% 600%;
             animation: gradient 10s ease infinite;
             display: flex;
-            flex-direction: row;
             justify-content: center;
+            padding: 20px;
+            gap: 20px;
         }
-        h1, h2, p {
-            margin: 10px 0;
-        }
-        #ideas-section, #top-ideas {
+        #ideas-section {
             background: rgba(255, 255, 255, 0.1);
             padding: 20px;
             border-radius: 10px;
-            margin: 20px;
-            width: 45%;
-            color: #fff;
-            text-align: left;
+            width: 60%;
         }
-        #top-ideas h2 {
+        #top-ideas {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            width: 30%;
+        }
+        #ideas-section h2, #top-ideas h2 {
             text-align: center;
+            color: #ff5733;
         }
         #idea-input {
-            width: 80%;
+            width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
             border: none;
             border-radius: 5px;
+            font-size: 16px;
         }
-        #ideas-list {
-            margin-top: 20px;
+        #ideas-list, #top-ideas-list {
+            margin-top: 10px;
+            overflow-y: auto;
+            max-height: 400px;
         }
         .idea-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
             margin: 10px 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            font-size: 0.9em;
-        }
-        .idea-content {
-            margin-bottom: 5px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         .idea-actions {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            font-size: 14px;
+            color: #ffcccb;
         }
         .emoji {
             cursor: pointer;
-            margin: 0 5px;
+            color: #ffcccb;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
-        .comments {
+        .comments, .top-idea-item {
             margin-top: 10px;
+            font-size: 12px;
+        }
+        .top-idea-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px;
+            border-radius: 5px;
+            margin: 5px 0;
         }
         .comment-input {
-            width: calc(100% - 22px);
+            width: 100%;
             padding: 5px;
             border: none;
             border-radius: 3px;
@@ -105,6 +120,12 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+
+        // Generate unique user ID for local storage
+        if (!localStorage.getItem("userId")) {
+            localStorage.setItem("userId", "user_" + Date.now());
+        }
+        const userId = localStorage.getItem("userId");
 
         // Submit Idea
         function submitIdea() {
@@ -146,7 +167,7 @@
                 const ideaItem = document.createElement('div');
                 ideaItem.className = 'idea-item';
                 ideaItem.innerHTML = `
-                    <div class="idea-content">${ideaData.text}</div>
+                    <div>${ideaData.text}</div>
                     <div class="idea-actions">
                         <span class="emoji" onclick="updateReaction('${ideaData.id}', 'likes')">👍 ${ideaData.likes}</span>
                         <span class="emoji" onclick="updateReaction('${ideaData.id}', 'dislikes')">👎 ${ideaData.dislikes}</span>
@@ -168,6 +189,7 @@
             topIdeasList.innerHTML = '';
             topIdeas.forEach((idea, index) => {
                 const ideaElement = document.createElement('div');
+                ideaElement.className = 'top-idea-item';
                 ideaElement.innerHTML = `<p>${index + 1}. ${idea.text} - 👍 ${idea.likes}</p>`;
                 topIdeasList.appendChild(ideaElement);
             });
@@ -175,9 +197,6 @@
 
         // Update Likes/Dislikes, allow only one like per user per idea
         function updateReaction(ideaId, type) {
-            const userId = "user_" + (localStorage.getItem("userId") || Date.now());
-            localStorage.setItem("userId", userId);
-
             const ideaRef = database.ref(`ideas/${ideaId}`);
             ideaRef.once('value').then((snapshot) => {
                 const data = snapshot.val();
