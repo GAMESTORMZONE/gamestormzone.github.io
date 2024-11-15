@@ -16,6 +16,9 @@
             animation: gradient 10s ease infinite;
             cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto;
         }
+        a, .menu a {
+            cursor: url('https://i.ibb.co/BfgVb75/lava-cursor-32x32.png') 16 16, auto; /* Egyedi kurzor a linkekre */
+        }
         @keyframes gradient {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -153,13 +156,13 @@
 
     <!-- Sidebar Menu -->
     <div class="menu" id="menu">
-        <a href="https://gamestormzone.github.io/videos.html" target="_blank">Videos</a>
-        <a href="https://gamestormzone.github.io/photos.html" target="_blank">Photos</a>
-        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank">FiveM Script Projects</a>
-        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank">Free FiveM Scripts</a>
-        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank">Free FiveM Cars</a>
-        <a href="https://gamestormzone.github.io/ideas.html" target="_blank">Ideas</a>
-        <a href="https://gamestormzone.github.io/games.html" target="_blank">Games</a>
+        <a href="https://gamestormzone.github.io/videos.html" target="_blank" onclick="playClickSound()">Videos</a>
+        <a href="https://gamestormzone.github.io/photos.html" target="_blank" onclick="playClickSound()">Photos</a>
+        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank" onclick="playClickSound()">FiveM Script Projects</a>
+        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank" onclick="playClickSound()">Free FiveM Scripts</a>
+        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank" onclick="playClickSound()">Free FiveM Cars</a>
+        <a href="https://gamestormzone.github.io/ideas.html" target="_blank" onclick="playClickSound()">Ideas</a>
+        <a href="https://gamestormzone.github.io/games.html" target="_blank" onclick="playClickSound()">Games</a>
     </div>
 
     <div id="content" style="display: none;">
@@ -172,7 +175,7 @@
         let countdown = 3;
         const countdownElement = document.getElementById("countdown");
         const rocketElement = document.getElementById("rocket-container");
-        const beepSound = new Audio("https://raw.githubusercontent.com/GAMESTORMZONE/gamestormzone.github.io/main/beep-07.wav"); // Használd a GitHub raw linket
+        const beepSound = new Audio("https://raw.githubusercontent.com/GAMESTORMZONE/gamestormzone.github.io/main/beep-07.wav");
 
         function startCountdown() {
             const countdownInterval = setInterval(() => {
@@ -204,6 +207,12 @@
         function toggleMenu() {
             const menu = document.getElementById("menu");
             menu.classList.toggle("active");
+        }
+
+        function playClickSound() {
+            beepSound.play().catch(error => {
+                console.warn("Failed to play click sound:", error);
+            });
         }
 
         window.onload = startCountdown;
