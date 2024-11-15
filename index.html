@@ -172,6 +172,7 @@
         const countdownElement = document.getElementById("countdown");
         const rocketElement = document.getElementById("rocket-container");
         const beepSound = new Audio("https://www.soundjay.com/button/switch-10.wav"); // Replace with a beeping sound URL
+        const clickSound = new Audio("https://www.soundjay.com/button/beep-07.wav"); // URL of the click sound
 
         function startCountdown() {
             const countdownInterval = setInterval(() => {
@@ -202,6 +203,11 @@
             const menu = document.getElementById("menu");
             menu.classList.toggle("active");
         }
+
+        // Play click sound on any click
+        document.addEventListener("click", () => {
+            clickSound.play();
+        });
 
         window.onload = startCountdown;
     </script>
