@@ -1,1 +1,139 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMESTORMZONE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1e1e2f;
+            color: #ffffff;
+            overflow: hidden;
+            background: linear-gradient(90deg, #1e1e2f, #ff5733, #ff7f50);
+            background-size: 600% 600%;
+            animation: gradient 10s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        #loader {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: #1e1e2f;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        #countdown {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #ff5733;
+        }
+        .rocket {
+            position: relative;
+            width: 50px;
+            height: 100px;
+            background: gray;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+        .rocket::before {
+            content: '';
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            width: 15px;
+            height: 50px;
+            background: orange;
+            border-radius: 50%;
+            animation: flame 0.1s infinite alternate;
+            transform: translateX(-50%);
+        }
+        .rocket::after {
+            content: '';
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            width: 10px;
+            height: 20px;
+            background: red;
+            border-radius: 50%;
+            animation: smoke 1s infinite;
+            opacity: 0.7;
+            transform: translateX(-50%);
+        }
+        @keyframes flame {
+            0% { height: 50px; background: orange; }
+            100% { height: 70px; background: yellow; }
+        }
+        @keyframes smoke {
+            0% { height: 20px; opacity: 0.7; transform: translateX(-50%) translateY(0px); }
+            100% { height: 40px; opacity: 0; transform: translateX(-50%) translateY(-40px); }
+        }
+        .shaking {
+            animation: shake 0.1s infinite alternate;
+        }
+        @keyframes shake {
+            from { transform: translate(1px, 1px) rotate(0deg); }
+            to { transform: translate(-1px, -1px) rotate(0deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="loader">
+        <div id="countdown">3</div>
+        <div id="rocket-container" class="shaking">
+            <div class="rocket" id="rocket"></div>
+        </div>
+    </div>
+
+    <div id="content" style="display: none;">
+        <h1>Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
+        <p>I do a lot of things :)</p>
+        <!-- Rest of your content here -->
+    </div>
+
+    <script>
+        let countdown = 3;
+        const countdownElement = document.getElementById("countdown");
+        const rocketElement = document.getElementById("rocket-container");
+        const beepSound = new Audio("https://www.soundjay.com/button/switch-10.wav"); // Replace with a beeping sound URL
+
+        function startCountdown() {
+            const countdownInterval = setInterval(() => {
+                beepSound.play();
+                countdownElement.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    launchRocket();
+                }
+                countdown--;
+            }, 1000);
+        }
+
+        function launchRocket() {
+            countdownElement.style.display = "none";
+            rocketElement.classList.remove("shaking");
+            rocketElement.classList.add("launch");
+            rocketElement.style.transition = "transform 3s ease-in-out";
+            rocketElement.style.transform = "translateY(-800px)";
+            
+            setTimeout(() => {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("content").style.display = "block";
+            }, 3000);
+        }
+
+        window.onload = startCountdown;
+    </script>
+</body>
+</html>  
