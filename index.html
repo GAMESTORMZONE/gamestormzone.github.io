@@ -24,90 +24,30 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        #loader {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background: #1e1e2f;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
+        #content {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            text-align: left;
         }
-        #countdown {
-            font-size: 4em;
-            margin-bottom: 20px;
-            color: #ff5733;
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
         }
-        .rocket {
-            position: relative;
-            width: 50px;
-            height: 100px;
-            background: gray;
-            border-radius: 25px;
-            overflow: hidden;
-        }
-        .rocket::before {
-            content: '';
-            position: absolute;
-            top: 80%;
-            left: 50%;
-            width: 15px;
-            height: 50px;
-            background: orange;
-            border-radius: 50%;
-            animation: flame 0.1s infinite alternate;
-            transform: translateX(-50%);
-        }
-        .rocket::after {
-            content: '';
-            position: absolute;
-            top: 90%;
-            left: 50%;
-            width: 10px;
-            height: 20px;
-            background: red;
-            border-radius: 50%;
-            animation: smoke 1s infinite;
-            opacity: 0.7;
-            transform: translateX(-50%);
-        }
-        @keyframes flame {
-            0% { height: 50px; background: orange; }
-            100% { height: 70px; background: yellow; }
-        }
-        @keyframes smoke {
-            0% { height: 20px; opacity: 0.7; transform: translateX(-50%) translateY(0px); }
-            100% { height: 40px; opacity: 0; transform: translateX(-50%) translateY(-40px); }
-        }
-        .shaking {
-            animation: shake 0.1s infinite alternate;
-        }
-        @keyframes shake {
-            from { transform: translate(1px, 1px) rotate(0deg); }
-            to { transform: translate(-1px, -1px) rotate(0deg); }
-        }
-
-        /* Menu Icon */
-        .menu-icon {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            cursor: pointer;
-            font-size: 24px;
+        .button-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
             color: #ffffff;
             background-color: #ff5733;
-            padding: 10px;
             border-radius: 5px;
-            transition: background-color 0.3s;
-            z-index: 10000;
+            text-decoration: none;
         }
-        .menu-icon:hover {
+        .button-link:hover {
             background-color: #ff7f50;
         }
-
         /* Sidebar Menu */
         .menu {
             position: fixed;
@@ -144,78 +84,72 @@
     </style>
 </head>
 <body>
-    <div id="loader">
-        <div id="countdown">3</div>
-        <div id="rocket-container" class="shaking">
-            <div class="rocket" id="rocket"></div>
-        </div>
-    </div>
-
-    <!-- Menu Icon -->
-    <div class="menu-icon" onclick="toggleMenu()">☰ Menu</div>
 
     <!-- Sidebar Menu -->
+    <div class="menu-icon" onclick="toggleMenu()">☰ Menu</div>
     <div class="menu" id="menu">
-        <a href="https://gamestormzone.github.io/videos.html" target="_blank" onclick="playClickSound()">Videos</a>
-        <a href="https://gamestormzone.github.io/photos.html" target="_blank" onclick="playClickSound()">Photos</a>
-        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank" onclick="playClickSound()">FiveM Script Projects</a>
-        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank" onclick="playClickSound()">Free FiveM Scripts</a>
-        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank" onclick="playClickSound()">Free FiveM Cars</a>
-        <a href="https://gamestormzone.github.io/ideas.html" target="_blank" onclick="playClickSound()">Ideas</a>
-        <a href="https://gamestormzone.github.io/games.html" target="_blank" onclick="playClickSound()">Games</a>
+        <a href="https://gamestormzone.github.io/videos.html" target="_blank">Videók</a>
+        <a href="https://gamestormzone.github.io/photos.html" target="_blank">Fotók</a>
+        <a href="https://gamestormzone.github.io/fivem-script-projects.html" target="_blank">FiveM Script Projektek</a>
+        <a href="https://gamestormzone.github.io/free-fivem-scripts.html" target="_blank">Ingyenes FiveM Scriptek</a>
+        <a href="https://gamestormzone.github.io/free-fivem-cars.html" target="_blank">Ingyenes FiveM Autók</a>
+        <a href="https://gamestormzone.github.io/ideas.html" target="_blank">Ötletek</a>
+        <a href="https://gamestormzone.github.io/games.html" target="_blank">Játékok</a>
     </div>
 
     <div id="content" style="display: none;">
-        <h1>Hi 👋, I'm <span class="glow">GAMESTORMZONE</span></h1>
-        <p>I do a lot of things :)</p>
-        <!-- Rest of your content here -->
+        <h1>Üdvözöllek a GAMESTORMZONE oldalán!</h1>
+
+        <div class="section">
+            <h2>Bemutatkozás</h2>
+            <p>Szia! Én vagyok GAMESTORMZONE, fejlesztő, aki FiveM scriptekkel, modokkal és egyedi tartalmakkal foglalkozik, különösen FiveM szerverek számára.</p>
+        </div>
+
+        <div class="section">
+            <h2>FiveM Scriptek</h2>
+            <p>Fedezd fel saját készítésű FiveM scripteimet, melyek javítják a játékélményt és a szerver funkcionalitását.</p>
+            <a href="https://gamestormzone.github.io/fivem-script-projects.html" class="button-link" target="_blank">Scriptek megtekintése</a>
+        </div>
+
+        <div class="section">
+            <h2>Ingyenes Források</h2>
+            <p>Tekintsd meg az ingyenes forrásaimat, beleértve a FiveM autókat, scripteket és modokat.</p>
+            <a href="https://gamestormzone.github.io/free-fivem-scripts.html" class="button-link" target="_blank">Ingyenes FiveM Scriptek</a>
+            <a href="https://gamestormzone.github.io/free-fivem-cars.html" class="button-link" target="_blank">Ingyenes FiveM Autók</a>
+        </div>
+
+        <div class="section">
+            <h2>Videó Galéria</h2>
+            <p>Tekintsd meg a munkáimat bemutató videókat, beleértve a tutorialokat és script bemutatókat.</p>
+            <a href="https://gamestormzone.github.io/videos.html" class="button-link" target="_blank">Videók megtekintése</a>
+        </div>
+
+        <div class="section">
+            <h2>Ötletek és Tippek</h2>
+            <p>Inspirációra van szükséged? Tekintsd meg az ötleteimet és javaslataimat a FiveM szerveredhez!</p>
+            <a href="https://gamestormzone.github.io/ideas.html" class="button-link" target="_blank">Ötletek megtekintése</a>
+        </div>
+
+        <div class="section">
+            <h2>Játékok</h2>
+            <p>Fedezd fel az általam készített vagy támogatott játékprojekteket, amelyek FiveM szerverekhez készültek.</p>
+            <a href="https://gamestormzone.github.io/games.html" class="button-link" target="_blank">Játékok megtekintése</a>
+        </div>
     </div>
 
     <script>
-        let countdown = 3;
-        const countdownElement = document.getElementById("countdown");
-        const rocketElement = document.getElementById("rocket-container");
-        const beepSound = new Audio("https://raw.githubusercontent.com/GAMESTORMZONE/gamestormzone.github.io/main/beep-07.wav");
-
-        function startCountdown() {
-            const countdownInterval = setInterval(() => {
-                beepSound.play().catch(error => {
-                    console.warn("Failed to play sound:", error);
-                });
-                countdownElement.textContent = countdown;
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    launchRocket();
-                }
-                countdown--;
-            }, 1000);
-        }
-
-        function launchRocket() {
-            countdownElement.style.display = "none";
-            rocketElement.classList.remove("shaking");
-            rocketElement.classList.add("launch");
-            rocketElement.style.transition = "transform 3s ease-in-out";
-            rocketElement.style.transform = "translateY(-800px)";
-            
-            setTimeout(() => {
-                document.getElementById("loader").style.display = "none";
-                document.getElementById("content").style.display = "block";
-            }, 3000);
-        }
-
         function toggleMenu() {
             const menu = document.getElementById("menu");
             menu.classList.toggle("active");
         }
 
-        function playClickSound() {
-            beepSound.play().catch(error => {
-                console.warn("Failed to play click sound:", error);
-            });
-        }
-
-        window.onload = startCountdown;
+        window.onload = function() {
+            setTimeout(() => {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("content").style.display = "block";
+            }, 3000);
+        };
     </script>
+
 </body>
 </html>
